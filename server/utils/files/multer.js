@@ -109,8 +109,43 @@ function handlePfpUpload(request, response, next) {
   });
 }
 
+function handleMultiFileUpload(request, response, next) {
+  const upload = multer({
+    storage: multer.diskStorage({
+      destination: function (req, file, cb) {
+        const uploadOutput =
+          process.env.NODE_ENV === "development"
+            ? path.resolve(__dirname, `../../../collector/hotdir`)
+            : path.resolve(process.env.STORAGE_DIR, `../../collector/hotdir`);
+        const fullPath = path.join(uploadOutput, path.dirname(file.originalname));
+        fs.mkdirSync(fullPath, { recursive: true });
+        cb(null, fullPath);
+      },
+      filename: function (req, file, cb) {
+        cb(null, path.basename(file.originalname));
+      },
+    }),
+    preservePath: true
+  }).array('files');
+
+  upload(request, response, function (err) {
+    if (err) {
+      response
+        .status(500)
+        .json({
+          success: false,
+          error: `Invalid file upload. ${err.message}`,
+        })
+        .end();
+      return;
+    }
+    next();
+  });
+}
+
 module.exports = {
   handleFileUpload,
   handleAssetUpload,
   handlePfpUpload,
+  handleMultiFileUpload,
 };

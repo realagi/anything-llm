@@ -12,7 +12,7 @@ const { Document } = require("../models/documents");
 const { DocumentVectors } = require("../models/vectors");
 const { WorkspaceChats } = require("../models/workspaceChats");
 const { getVectorDbClass } = require("../utils/helpers");
-const { handleFileUpload, handlePfpUpload } = require("../utils/files/multer");
+const { handleFileUpload, handlePfpUpload, handleMultiFileUpload } = require("../utils/files/multer");
 const { validatedRequest } = require("../utils/middleware/validatedRequest");
 const { Telemetry } = require("../models/telemetry");
 const {
@@ -34,6 +34,8 @@ const { getTTSProvider } = require("../utils/TextToSpeech");
 const { WorkspaceThread } = require("../models/workspaceThread");
 const truncate = require("truncate");
 const { purgeDocument } = require("../utils/files/purgeDocument");
+const multer = require('multer');
+const upload = multer({ storage: multer.memoryStorage() });
 
 function workspaceEndpoints(app) {
   if (!app) return;
@@ -153,6 +155,68 @@ function workspaceEndpoints(app) {
       } catch (e) {
         console.error(e.message, e);
         response.sendStatus(500).end();
+      }
+    }
+  );
+
+  app.post(
+    "/workspace/:slug/upload-files",
+    [
+      validatedRequest,
+      flexUserRoleValid([ROLES.admin, ROLES.manager]),
+      handleMultiFileUpload,
+    ],
+    async function (request, response) {
+      try {
+        const { slug } = request.params;
+        const user = await userFromSession(request, response);
+        const workspace = multiUserMode(response)
+          ? await Workspace.getWithUser(user, { slug })
+          : await Workspace.get({ slug });
+
+        if (!workspace) {
+          return response.sendStatus(400).end();
+        }
+
+        const Collector = new CollectorApi();
+        const processingOnline = await Collector.online();
+
+        if (!processingOnline) {
+          return response.status(500).json({
+            success: false,
+            error: "Document processing API is not online. Files will not be processed automatically.",
+          });
+        }
+
+        const uploadedFiles = request.files;
+        const processedFiles = [];
+
+        for (const file of uploadedFiles) {
+          const { success, reason } = await Collector.processDocument(file.originalname);
+          if (success) {
+            processedFiles.push(file.originalname);
+            Collector.log(`Document ${file.originalname} uploaded processed and successfully. It is now available in documents.`);
+          } else {
+            console.error(`Failed to process ${file.originalname}: ${reason}`);
+          }
+        }
+
+        await Telemetry.sendTelemetry("documents_uploaded", { count: processedFiles.length });
+        await EventLogs.logEvent(
+          "documents_uploaded",
+          {
+            count: processedFiles.length,
+          },
+          user?.id
+        );
+
+        response.status(200).json({
+          success: true,
+          processedCount: processedFiles.length,
+        });
+      } catch (e) {
+        console.error(e.message, e);
+        response.status(500).json({ success: false, error: "Server error" });
       }
     }
   );

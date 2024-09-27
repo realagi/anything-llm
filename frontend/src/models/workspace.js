@@ -248,6 +248,20 @@ const Workspace = {
     const data = await response.json();
     return { response, data };
   },
+  uploadFiles: async function (slug, files) {
+    const formData = new FormData();
+    files.forEach((fileObj) => {
+      formData.append('files', fileObj.file, fileObj.file.webkitRelativePath || fileObj.file.name);
+    });
+
+    const response = await fetch(`${API_BASE}/workspace/${slug}/upload-files`, {
+      method: 'POST',
+      body: formData,
+      headers: baseHeaders(),
+    });
+    const data = await response.json();
+    return { response, data };
+  },
   uploadLink: async function (slug, link) {
     const response = await fetch(`${API_BASE}/workspace/${slug}/upload-link`, {
       method: "POST",

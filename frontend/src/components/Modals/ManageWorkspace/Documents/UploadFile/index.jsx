@@ -44,22 +44,44 @@ export default function UploadFile({
   const handleUploadSuccess = debounce(() => fetchKeys(true), 1000);
   const handleUploadError = (_msg) => null; // stubbed.
 
-  const onDrop = async (acceptedFiles, rejections) => {
-    const newAccepted = acceptedFiles.map((file) => {
-      return {
+  const onDrop = async (acceptedFiles) => {
+    const processFiles = (files, isRejected = false) => {
+      return files.map((file) => ({
         uid: v4(),
         file,
-      };
-    });
-    const newRejected = rejections.map((file) => {
-      return {
-        uid: v4(),
-        file: file.file,
-        rejected: true,
-        reason: file.errors[0].code,
-      };
-    });
-    setFiles([...newAccepted, ...newRejected]);
+        rejected: isRejected,
+        reason: isRejected ? "Unsupported file type" : null,
+        path: file.path || file.webkitRelativePath || file.name,
+      }));
+    };
+
+    const processItem = async (item) => {
+      if (item.isFile) {
+        const file = await new Promise((resolve) => item.file(resolve));
+        file.path = item.fullPath.slice(1); // Remove leading slash
+        return processFiles([file])[0];
+      } else if (item.isDirectory) {
+        const dirReader = item.createReader();
+        const entries = await new Promise((resolve) => dirReader.readEntries(resolve));
+        const children = await Promise.all(entries.map(processItem));
+        return children.flat();
+      }
+    };
+
+    const processedFiles = await Promise.all(
+      acceptedFiles.map(async (file) => {
+        if (file.webkitGetAsEntry) {
+          const entry = file.webkitGetAsEntry();
+          if (entry) {
+            return processItem(entry);
+          }
+        }
+        return processFiles([file])[0];
+      })
+    );
+
+    setFiles((prev) => [...prev, ...processedFiles.flat()]);
+    console.log("Processed files:", processedFiles.flat());
   };
 
   useEffect(() => {
@@ -70,9 +92,12 @@ export default function UploadFile({
     checkProcessorOnline();
   }, []);
 
-  const { getRootProps, getInputProps } = useDropzone({
+  const { getRootProps, getInputProps, open } = useDropzone({
     onDrop,
     disabled: !ready,
+    noClick: true,
+    noDrag: files.length > 0,
+    multiple: true,
   });
 
   return (
@@ -83,7 +108,7 @@ export default function UploadFile({
         } hover:bg-zinc-900/90`}
         {...getRootProps()}
       >
-        <input {...getInputProps()} />
+        <input {...getInputProps()} webkitdirectory type="file" />
         {ready === false ? (
           <div className="flex flex-col items-center justify-center h-full">
             <CloudArrowUp className="w-8 h-8 text-white/80" />
@@ -96,10 +121,10 @@ export default function UploadFile({
             </div>
           </div>
         ) : files.length === 0 ? (
-          <div className="flex flex-col items-center justify-center">
+          <div onClick={open} className="flex flex-col items-center justify-center">
             <CloudArrowUp className="w-8 h-8 text-white/80" />
             <div className="text-white text-opacity-80 text-sm font-semibold py-1">
-              Click to upload or drag and drop
+              Drag and drop files or folders here
             </div>
             <div className="text-white text-opacity-60 text-xs font-medium py-1">
               supports text files, csv's, spreadsheets, audio files, and more!
