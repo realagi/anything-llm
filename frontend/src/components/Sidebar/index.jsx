@@ -33,7 +33,7 @@ export default function Sidebar() {
         <img
           src={logo}
           alt="Logo"
-          className="rounded max-h-[24px] object-contain"
+          className="rounded max-h-[24px] object-contain invertible-image"
         />
       </Link>
       <div
@@ -115,7 +115,7 @@ export function SidebarMobileHeader() {
           <img
             src={logo}
             alt="Logo"
-            className="block mx-auto h-6 w-auto"
+            className="block mx-auto h-6 w-auto invertible-image"
             style={{ maxHeight: "40px", objectFit: "contain" }}
           />
         </div>

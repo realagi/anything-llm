@@ -58,6 +58,7 @@ export default {
           text: {
             primary: 'var(--theme-text-primary)',
             secondary: 'var(--theme-text-secondary)',
+            description: 'var(--theme-text-description)',
           },
           sidebar: {
             item: {

@@ -324,7 +324,7 @@ export default function GeneralEmbeddingPreference() {
                         <div className="text-sm font-semibold text-white">
                           {selectedEmbedderObject.name}
                         </div>
-                        <div className="mt-1 text-xs text-description">
+                        <div className="mt-1 text-xs text-theme-text-description">
                           {selectedEmbedderObject.description}
                         </div>
                       </div>

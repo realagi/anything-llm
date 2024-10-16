@@ -202,7 +202,7 @@ export default function TextToSpeechProvider({ settings }) {
                   <div className="text-sm font-semibold text-white">
                     {selectedProviderObject.name}
                   </div>
-                  <div className="mt-1 text-xs text-description">
+                  <div className="mt-1 text-xs text-theme-text-description">
                     {selectedProviderObject.description}
                   </div>
                 </div>

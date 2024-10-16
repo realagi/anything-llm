@@ -12,6 +12,7 @@
   --theme-bg-chat-input: #27282a;
   --theme-text-primary: #ffffff;
   --theme-text-secondary: rgba(255, 255, 255, 0.6);
+  --theme-text-description: rgba(255, 255, 255, 0.6);
   --theme-sidebar-item-default: rgba(255, 255, 255, 0.1);
   --theme-sidebar-item-selected: rgba(255, 255, 255, 0.3);
   --theme-sidebar-item-hover: #3f3f42;
@@ -29,24 +30,80 @@
   --theme-settings-input-active: rgb(255 255 255 / 0.2);
   --theme-settings-input-text: #ffffff;
   --theme-modal-border: #3f3f42;
+  --theme-text-description: rgba(255, 255, 255, 0.6);
+  --theme-image-invert: 0;
 }
 
 [data-theme="light"] {
   --theme-bg-primary: #ffffff;
-  --theme-bg-secondary: #f4f4f4;
-  --theme-bg-sidebar: #f4f4f4;
+  --theme-bg-secondary: #f5f7fa;
+  --theme-bg-sidebar: #f0f4f8;
   --theme-bg-container: #ffffff;
+  --theme-bg-chat: #f5f7fa;
+  --theme-bg-chat-input: #e8eef5;
   --theme-text-primary: #000000;
-  --theme-text-secondary: #4a5568;
-  --theme-sidebar-item-default: rgba(0, 0, 0, 0.1);
-  --theme-sidebar-item-selected: rgba(0, 0, 0, 0.2);
-  --theme-sidebar-item-hover: #e2e8f0;
-  --theme-sidebar-subitem-default: rgba(0, 0, 0, 0.1);
-  --theme-sidebar-subitem-selected: rgba(0, 0, 0, 0.05);
-  --theme-sidebar-subitem-hover: rgba(0, 0, 0, 0.05);
-  --theme-sidebar-footer-icon: rgba(0, 0, 0, 0.3);
-  --theme-sidebar-footer-icon-hover: rgba(0, 0, 0, 0.5);
-  --theme-sidebar-border: rgba(0, 0, 0, 0.1);
+  --theme-text-secondary: #666666;
+  --theme-text-description: #666666;
+  --theme-sidebar-item-default: #e0e7ef;
+  --theme-sidebar-item-selected: #c7d5e3;
+  --theme-sidebar-item-hover: #d1dce8;
+  --theme-sidebar-subitem-default: #e8eef5;
+  --theme-sidebar-subitem-selected: #d1dce8;
+  --theme-sidebar-subitem-hover: #d9e2ec;
+  --theme-sidebar-footer-icon: #a0aec0;
+  --theme-sidebar-footer-icon-hover: #718096;
+  --theme-sidebar-border: #e2e8f0;
+  --theme-chat-input-border: #cbd5e0;
+  --theme-action-menu-bg: #ffffff;
+  --theme-action-menu-item-hover: #edf2f7;
+  --theme-settings-input-bg: #edf2f7;
+  --theme-settings-input-placeholder: #a0aec0;
+  --theme-settings-input-active: #e2e8f0;
+  --theme-settings-input-text: #4a5568;
+  --theme-modal-border: #e2e8f0;
+  --theme-image-invert: 1;
+}
+
+.invertible-image {
+  filter: invert(var(--theme-image-invert));
+}
+
+
+/* Default text color */
+body {
+  color: var(--theme-text-primary);
+}
+
+/* Override Tailwind's text-white class */
+.text-white {
+  color: var(--theme-text-primary) !important;
+}
+
+/* Create theme-aware text color utilities */
+.text-theme-primary {
+  color: var(--theme-text-primary);
+}
+.placeholder\:text-white::placeholder {
+  color: var(--theme-text-secondary) !important;
+}
+
+.text-theme-secondary {
+  color: var(--theme-text-secondary);
+}
+
+/* Additional utility classes for other common text colors */
+p,
+span,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: var(--theme-text-secondary);
+}
+* {
+  color: inherit;
 }
 
 html,

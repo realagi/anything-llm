@@ -241,7 +241,7 @@ export default function AgentWebSearchSelection({
                     <div className="text-sm font-semibold text-white">
                       {selectedSearchProviderObject.name}
                     </div>
-                    <div className="mt-1 text-xs text-description">
+                    <div className="mt-1 text-xs text-theme-text-description">
                       {selectedSearchProviderObject.description}
                     </div>
                   </div>

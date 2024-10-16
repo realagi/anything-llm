@@ -56,7 +56,7 @@ export default function SettingsSidebar() {
             <img
               src={logo}
               alt="Logo"
-              className="block mx-auto h-6 w-auto"
+              className="block mx-auto h-6 w-auto invertible-image"
               style={{ maxHeight: "40px", objectFit: "contain" }}
             />
           </div>
@@ -140,7 +140,7 @@ export default function SettingsSidebar() {
           <img
             src={logo}
             alt="Logo"
-            className="rounded max-h-[24px]"
+            className="rounded max-h-[24px] invertible-image"
             style={{ objectFit: "contain" }}
           />
         </Link>

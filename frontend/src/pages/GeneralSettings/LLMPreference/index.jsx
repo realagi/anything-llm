@@ -448,7 +448,7 @@ export default function GeneralLLMPreference() {
                         <div className="text-sm font-semibold text-white">
                           {selectedLLMObject?.name || "None selected"}
                         </div>
-                        <div className="mt-1 text-xs text-description">
+                        <div className="mt-1 text-xs text-theme-text-description">
                           {selectedLLMObject?.description ||
                             "You need to select an LLM"}
                         </div>

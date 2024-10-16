@@ -282,7 +282,7 @@ export default function GeneralVectorDatabase() {
                         <div className="text-sm font-semibold text-white">
                           {selectedVDBObject.name}
                         </div>
-                        <div className="mt-1 text-xs text-description">
+                        <div className="mt-1 text-xs text-theme-text-description">
                           {selectedVDBObject.description}
                         </div>
                       </div>
